@@ -1919,14 +1919,19 @@ class Library(_BaseObject):
         
         self._request("library.addTrack", False, params)
     
-    def get_albums(self, limit=50):
+    def get_albums(self, artist=None, limit=50):
         """
         Returns a sequence of Album objects
+        Specify an artist to return only that artist's albums found in the library
         if limit==None it will return all (may take a while)
         """
         
+        params = self._get_params()
+        if artist:
+            params['artist'] = artist
+        
         seq = []
-        for node in _collect_nodes(limit, self, "library.getAlbums", True):
+        for node in _collect_nodes(limit, self, "library.getAlbums", True, params):
             name = _extract(node, "name")
             artist = _extract(node, "name", 1)
             playcount = _number(_extract(node, "playcount"))
